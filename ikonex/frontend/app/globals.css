@@ -24,3 +24,12 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+input, select, textarea {
+  color: #111111 !important;
+  background-color: #ffffff !important;
+}
+
+option {
+  color: #111111 !important;
+  background-color: #ffffff !important;
+}
