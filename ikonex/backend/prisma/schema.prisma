@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+}
+
+model ClassStream {
+  id          String          @id @default(cuid())
+  name        String          @unique
+  description String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  students    Student[]
+  subjects    ClassSubject[]
+}
+
+model Student {
+  id            String       @id @default(cuid())
+  admissionNo   String       @unique
+  firstName     String
+  lastName      String
+  gender        Gender
+  dateOfBirth   DateTime
+  parentName    String
+  parentPhone   String
+  email         String?
+  address       String?
+  classStreamId String
+  classStream   ClassStream  @relation(fields: [classStreamId], references: [id])
+  assessments   Assessment[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+model Subject {
+  id          String         @id @default(cuid())
+  name        String
+  code        String         @unique
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  classes     ClassSubject[]
+  assessments Assessment[]
+}
+
+model ClassSubject {
+  id            String      @id @default(cuid())
+  classStreamId String
+  subjectId     String
+  classStream   ClassStream @relation(fields: [classStreamId], references: [id], onDelete: Cascade)
+  subject       Subject     @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([classStreamId, subjectId])
+}
+
+model Assessment {
+  id          String    @id @default(cuid())
+  studentId   String
+  subjectId   String
+  catScore    Float     @default(0)
+  examScore   Float     @default(0)
+  total       Float     @default(0)
+  grade       String    @default("")
+  term        Term
+  academicYear String
+  student     Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject     Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([studentId, subjectId, term, academicYear])
+}
+
+enum Term {
+  TERM_1
+  TERM_2
+  TERM_3
+}
+
+model GradingScale {
+  id        String   @id @default(cuid())
+  grade     String
+  minMark   Float
+  maxMark   Float
+  points    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

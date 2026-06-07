@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { getStreams, getStream, createStream, updateStream, deleteStream, assignSubjects } from '../controllers/stream.controller';
+import { authenticate } from '../middleware/auth';
+const router = Router();
+router.use(authenticate);
+router.get('/', getStreams);
+router.get('/:id', getStream);
+router.post('/', createStream);
+router.put('/:id', updateStream);
+router.delete('/:id', deleteStream);
+router.post('/:id/subjects', assignSubjects);
+export default router;

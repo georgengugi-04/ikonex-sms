@@ -1,0 +1,11 @@
+import { Router } from 'express';
+import { createAssessment, updateAssessment, getStudentAssessments, getClassAssessments, getDashboardStats } from '../controllers/assessment.controller';
+import { authenticate } from '../middleware/auth';
+const router = Router();
+router.use(authenticate);
+router.get('/dashboard', getDashboardStats);
+router.get('/student/:studentId', getStudentAssessments);
+router.get('/class/:streamId', getClassAssessments);
+router.post('/', createAssessment);
+router.put('/:id', updateAssessment);
+export default router;
